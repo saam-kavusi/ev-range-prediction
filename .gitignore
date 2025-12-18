@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+
+# Data (optional – choose ONE strategy)
+data/raw/
+# data/processed/   <-- comment OUT if you want to keep outputs
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+.idea/
+
+notebooks/models/
