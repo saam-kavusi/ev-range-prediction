@@ -1,8 +1,8 @@
 # EV Range Prediction 🚗⚡
 
-This project builds a **production-ready machine learning pipeline** to predict the **EPA driving range (miles)** of electric vehicles using vehicle specifications and attributes.
+An **end-to-end, leakage-aware machine learning pipeline** that predicts **EPA driving range (miles)** for electric vehicles using vehicle specifications and attributes.
 
-The goal is not only to achieve strong predictive performance, but to demonstrate **sound ML practices**, including leakage awareness, reproducibility, and clear separation between research and inference.
+This project emphasizes **real-world ML practices**: reproducibility, pipeline integrity, evaluation discipline, and interpretable insights — not just raw accuracy.
 
 ---
 
@@ -10,28 +10,28 @@ The goal is not only to achieve strong predictive performance, but to demonstrat
 
 - Predict EV driving range (miles)
 - Build a reusable preprocessing + model pipeline
-- Provide script-based inference (`predict.py`)
-- Generate interpretable insights and visualizations
-- Maintain honest evaluation and leakage control
+- Support production-ready inference via script
+- Generate interpretable insights and rankings
+- Explicitly prevent feature leakage
 
 ---
 
 ## 📊 Dataset
 
-- Source: EPA Vehicles Dataset
-- Contains technical, categorical, and efficiency-related attributes
-- Includes many **post-processed features** derived from energy consumption
+- Source: **EPA Vehicles Dataset**
+- Contains numeric, categorical, and efficiency-related features
+- Includes many **post-processed attributes derived from energy consumption**
 
-⚠️ Because the dataset’s structure can encode the target indirectly, special care was taken to avoid **target leakage**.
+⚠️ Because many features can indirectly encode driving range, **leakage control was a primary design concern**.
 
 ---
 
 ## 🧠 Modeling Approach
 
-- **Pipeline-based design** using `scikit-learn`
+- **Pipeline-based design** (`scikit-learn`)
 - Preprocessing:
-  - Numeric features → median imputation
-  - Categorical features → constant imputation + one-hot encoding
+  - Numeric → median imputation
+  - Categorical → constant imputation + one-hot encoding
 - Model:
   - `RandomForestRegressor`
 - Evaluation metrics:
@@ -41,13 +41,13 @@ The goal is not only to achieve strong predictive performance, but to demonstrat
 
 ---
 
-## ⚠️ Important Design Decision: Notebook-Based Training
+## ⚠️ Design Decision: Notebook-Based Training
 
 Model training is intentionally performed in notebooks rather than a standalone training script.
 
-**Why?**
+**Why this matters**
 
-The EPA dataset contains many efficiency- and cost-derived features that can indirectly encode driving range. Training inside notebooks allows:
+The EPA dataset contains multiple efficiency- and cost-derived features that can indirectly encode EV range. Notebook-based training enables:
 
 - Explicit feature inspection
 - Manual leakage detection
@@ -60,13 +60,13 @@ This prevents misleadingly optimistic results that can occur in blind script-bas
 notebooks/02_model_training.ipynb
 ```
 
-The `train.py` script exists to document this design choice and guide reproducibility.
+The `train.py` script exists to document this design choice and preserve reproducibility intent.
 
 ---
 
 ## 🔮 Inference (Production-Ready)
 
-Predictions are generated via:
+Predictions are generated using:
 
 ```bash
 python predict.py
@@ -74,7 +74,7 @@ python predict.py
 
 - Loads the full saved pipeline (`models/ev_range_model.joblib`)
 - Applies preprocessing automatically
-- Outputs a predicted EV range in miles
+- Outputs predicted EV range (miles)
 
 An example input/output pair is saved to:
 ```
@@ -85,10 +85,10 @@ data/processed/example_prediction.json
 
 ## 🏆 Insight: Top EVs by Predicted Range
 
-Using the trained model, vehicles were ranked by **predicted EPA driving range**.
+Vehicles were ranked by **predicted EPA driving range** using the trained pipeline.
 
-### Key result:
-**Lucid Air Grand Touring variants consistently rank highest**, reflecting their industry-leading efficiency and large battery capacity.
+**Key result:**  
+**Lucid Air Grand Touring variants consistently rank highest**, reflecting industry-leading efficiency and large battery capacity.
 
 📄 Ranked results:
 ```
@@ -97,12 +97,31 @@ data/processed/top_ev_by_predicted_range.csv
 
 📊 Visualization:
 
+## Top 20 EVs by Predicted Driving Range
+
+The model was used to generate predictions across the full dataset and rank vehicles by estimated driving range.
+
+### Bar Chart — Relative Comparison
+This visualization highlights how the top vehicles compare at a glance.
+
 ![Top 20 EVs by Predicted Range](figures/top_20_ev_by_predicted_range.png)
 
-### Caveats:
-- Rankings are based on **model predictions**, not official EPA certification values
-- Results reflect **range only**, not price, performance, or overall vehicle quality
-- Rankings are limited to vehicles present in the **test subset** of the dataset
+### Ranked Table — Exact Values
+This table shows the exact ranked results used to generate the chart.
+
+![Top 20 EVs by Predicted Range (Table)](figures/top_20_ev_by_predicted_range_table.png)
+
+> **Note:** These rankings reflect model predictions based on historical EPA vehicle data and available features.  
+> Results are influenced by feature availability, preprocessing choices, and model assumptions, and should not be interpreted as official EPA range ratings.
+
+
+![Predicted vs Actual EV Range](figures/predicted_vs_actual.png)
+
+
+### Caveats
+- Rankings are **model-based predictions**, not official EPA certification values
+- Results reflect **driving range only**, not price, performance, or overall quality
+- Analysis is limited to vehicles present in the **test subset**
 - Intended for **comparative insight**, not consumer purchasing advice
 
 ---
@@ -139,10 +158,11 @@ ev-range-prediction/
 ## ✅ Summary
 
 This project demonstrates:
+
 - End-to-end ML pipeline design
-- Leakage-aware training
-- Honest evaluation
-- Reproducible inference
+- Leakage-aware training decisions
+- Honest evaluation and interpretation
+- Production-ready inference
 - Data-driven insight generation
 
-It is designed to reflect **real-world ML workflows**, not just benchmark optimization.
+The workflow reflects **real-world ML practice**, not benchmark-only optimization.
